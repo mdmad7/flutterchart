@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'package:shopcart/models/Product.dart';
+import 'package:shopcart/providers/Cart.dart';
 
 class MyCatalog extends StatefulWidget {
   @override
@@ -33,6 +35,15 @@ class _MyCatalogState extends State<MyCatalog> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            tooltip: 'Cart button',
+            onPressed: () {
+              Navigator.pushNamed(context, '/cart');
+            },
+          )
+        ],
         backgroundColor: Colors.black45,
         title: Text("Catalog",
             style: TextStyle(
@@ -45,28 +56,38 @@ class _MyCatalogState extends State<MyCatalog> {
         separatorBuilder: (context, index) => Divider(),
         itemBuilder: (BuildContext context, int index) {
           Product product = products[index];
-          return ListTile(
-            title: Text(
-              product.name,
-              style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "Raleway"),
-            ),
-            // leading: CircleAvatar(
-            //   child: Text(""),
-            // ),
-            subtitle: Text(
-              'USD ${product.price}',
-              style: TextStyle(fontFamily: "Raleway"),
-            ),
-            trailing: FlatButton(
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 15.0),
-              child: Text("Add"),
-              onPressed: () {},
-            ),
+          return Consumer<CartModel>(
+            builder: (context, cart, child) {
+              bool exists = cart.products.contains(product);
+              return ListTile(
+                title: Text(
+                  product.name,
+                  style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: "Raleway"),
+                ),
+                // leading: CircleAvatar(
+                //   child: Text(""),
+                // ),
+                subtitle: Text(
+                  'USD ${product.price}',
+                  style: TextStyle(fontFamily: "Raleway"),
+                ),
+                trailing: FlatButton(
+                  color: Colors.blueAccent,
+                  textColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 15.0),
+                  child: exists ? Icon(Icons.check) : Text("Add"),
+                  onPressed: exists
+                      ? null
+                      : () {
+                          Provider.of<CartModel>(context, listen: false)
+                              .add(product);
+                        },
+                ),
+              );
+            },
           );
         },
       ),

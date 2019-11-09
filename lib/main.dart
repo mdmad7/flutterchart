@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shopcart/pages/Login.dart';
 import 'package:shopcart/pages/MyCart.dart';
 import 'package:shopcart/pages/MyCatalog.dart';
+import 'package:shopcart/providers/Cart.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(ChangeNotifierProvider<CartModel>(
+      builder: (context) => CartModel(),
+      child: MyApp(),
+    ));
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -16,7 +21,7 @@ class MyApp extends StatelessWidget {
         fontFamily: "Lora",
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/cart',
+      initialRoute: '/',
       routes: {
         '/login': (context) => Login(),
         '/': (context) => MyCatalog(),
